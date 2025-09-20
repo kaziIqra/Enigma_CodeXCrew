@@ -16,7 +16,11 @@ const projectSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    isVerified: { type: Boolean, default: false },
+    status: {
+      type: String,
+      enum: ["Pending", "Rejected", "Approved", "Blacklisted"],
+      default: "Pending",
+    },
     impactUnit: { type: String }, // e.g. "tree", "meal"
     impactValue: { type: Number }, // e.g. 100 = 1 tree
     milestones: [
