@@ -1,6 +1,7 @@
 import express from "express";
 import { authorizeRole, protect } from "../middleware/authMiddleware.js";
 import Project from "../models/Project.js";
+import Donation from "../models/Donation.js";
 
 const router = express.Router();
 
@@ -8,51 +9,51 @@ const router = express.Router();
 
 
 // POST /user/projects/:id/donate
-// router.post(
-//   "/projects/:id/donate",
-//   protect,
-//   authorizeRole("user"),
-//   async (req, res) => {
-//     try {
-//       const { amount } = req.body;
-//       if (!amount || amount <= 0)
-//         return res.status(400).json({ message: "Invalid donation amount" });
+router.post(
+  "/projects/:id/donate",
+  protect,
+  authorizeRole("user"),
+  async (req, res) => {
+    try {
+      const { amount } = req.body;
+      if (!amount || amount <= 0)
+        return res.status(400).json({ message: "Invalid donation amount" });
 
-//       const project = await Project.findOne({
-//         _id: req.params.id,
-//         status: "Approved",
-//       });
-//       if (!project)
-//         return res.status(404).json({ message: "Project not found" });
+      const project = await Project.findOne({
+        _id: req.params.id,
+        status: "Approved",
+      });
+      if (!project)
+        return res.status(404).json({ message: "Project not found" });
 
-//       // Create donation record
-//       const donation = await Donation.create({
-//         donor: req.user._id,
-//         project: project._id,
-//         amount,
-//         paymentId: "mock_payment_id", // replace with real payment integration if needed
-//       });
+      // Create donation record
+      const donation = await Donation.create({
+        donor: req.user._id,
+        project: project._id,
+        amount,
+        paymentId: "mock_payment_id", // replace with real payment integration if needed
+      });
 
-//       // Update project raised amount
-//       project.raisedAmount += amount;
-//       await project.save();
+      // Update project raised amount
+      project.raisedAmount += amount;
+      await project.save();
 
-//       // Add donation reference to user
-//       req.user.donations.push(donation._id);
-//       await req.user.save();
+      // Add donation reference to user
+      req.user.donations.push(donation._id);
+      await req.user.save();
 
-//       res.status(201).json({
-//         success: true,
-//         message: `Donated ₹${amount} successfully`,
-//         donation,
-//         project,
-//       });
-//     } catch (err) {
-//       console.error(err);
-//       res.status(500).json({ message: "Server error while donating" });
-//     }
-//   }
-// );
+      res.status(201).json({
+        success: true,
+        message: `Donated ₹${amount} successfully`,
+        donation,
+        project,
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server error while donating" });
+    }
+  }
+);
 
 // POST /user/projects/:id/follow
 router.post(

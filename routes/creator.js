@@ -3,7 +3,6 @@ import Project from "../models/Project.js";
 import { protect, authorizeRole } from "../middleware/authMiddleware.js";
 import multer from "multer";
 import path from "path";
-
 const router = express.Router();
 
 // Setup storage
@@ -17,7 +16,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
-
 // Creator submits a new project
 // POST /creator/projects
 router.post(

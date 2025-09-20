@@ -8,10 +8,28 @@ import moderatorRoutes from "./routes/moderator.js";
 import { protect, authorizeRole } from "./middleware/authMiddleware.js";
 import User from "./models/User.js";
 import Project from "./models/Project.js";
+import path from "path";
+import cors from "cors";
+
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Allow frontend (3000) to access backend (5000)
 
 dotenv.config();
 const app = express();
 app.use(express.json());
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+app.use(
+  cors({
+    origin: "http://localhost:3000", // frontend URL
+    credentials: true, // allow cookies / auth headers
+  })
+);
 
 mongoose
   .connect(process.env.MONGO_URI)
