@@ -13,7 +13,7 @@ const donationSchema = new mongoose.Schema(
       required: true,
     },
     amount: { type: Number, required: true },
-    paymentId: { type: String }, // Razorpay payment_id (or mock)
+    paymentId: { type: String },
   },
   { timestamps: true }
 );

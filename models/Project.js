@@ -9,6 +9,12 @@ const projectSchema = new mongoose.Schema(
       enum: ["Education", "Environment", "Health", "Crisis", "Other"],
       required: true,
     },
+    images: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
     location: { type: "String", required: true },
     goalAmount: { type: Number, required: true },
     raisedAmount: { type: Number, default: 0 },

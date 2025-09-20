@@ -6,6 +6,8 @@ import userRoutes from "./routes/user.js";
 import creatorRoutes from "./routes/creator.js";
 import moderatorRoutes from "./routes/moderator.js";
 import { protect, authorizeRole } from "./middleware/authMiddleware.js";
+import User from "./models/User.js";
+import Project from "./models/Project.js";
 
 dotenv.config();
 const app = express();
@@ -21,8 +23,47 @@ app.use("/creator", creatorRoutes);
 app.use("/user", userRoutes);
 app.use("/moderator", moderatorRoutes);
 
-app.get("/", protect, authorizeRole("user"), (req, res) => {
-  res.send("Hello");
+// GET /profile
+app.get("/profile", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+      .select("-password")
+      .populate("donations")
+      .populate("followedProjects", "title category status");
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json({ success: true, user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error while fetching profile" });
+  }
+});
+
+app.get("/", async (req, res) => {
+  try {
+    const projects = await Project.find({ status: "Approved" })
+      .populate("creator", "name email")
+      .sort({ createdAt: -1 });
+    res.status(200).json({ success: true, count: projects.length, projects });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error while fetching projects" });
+  }
+});
+
+app.get("/projects/:id", async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id)
+      .populate("creator", "name email")
+      .populate("milestones");
+    if (project.status != "Approved")
+      return res.status(404).json({ message: "Project not found" });
+    res.status(200).json({ success: true, project });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error while fetching project" });
+  }
 });
 
 app.listen(5000, () => console.log("Server running on port 5000"));
