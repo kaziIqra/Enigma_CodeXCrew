@@ -63,6 +63,8 @@ router.put(
         default:
           return res.status(400).json({ message: "Invalid action parameter" });
       }
+
+      project.verifier = req.user._id;
       await project.save();
 
       return res.status(200).json({
@@ -76,7 +78,5 @@ router.put(
     }
   }
 );
-
-
 
 export default router;
