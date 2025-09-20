@@ -9,6 +9,7 @@ const projectSchema = new mongoose.Schema(
       enum: ["Education", "Environment", "Health", "Crisis", "Other"],
       required: true,
     },
+    location: { type: "String", required: true },
     goalAmount: { type: Number, required: true },
     raisedAmount: { type: Number, default: 0 },
     creator: {
