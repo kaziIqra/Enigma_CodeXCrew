@@ -40,7 +40,7 @@ app.get("/profile", protect, async (req, res) => {
   }
 });
 
-app.get("/", async (req, res) => {
+app.get("/projects", async (req, res) => {
   try {
     const projects = await Project.find({ status: "Approved" })
       .populate("creator", "name email")
